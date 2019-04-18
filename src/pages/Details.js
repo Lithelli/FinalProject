@@ -3,7 +3,8 @@ import { View, SafeAreaView, StyleSheet, Linking } from 'react-native'
 import { Text, Image, ListItem } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ScrollView } from 'react-native-gesture-handler';
-import {pics} from '../assets/consts'
+import { pics } from '../assets/consts'
+import LaunchNavigator from 'react-native-launch-navigator';
 
 export default class Details extends Component {
     static navigationOptions = ({ navigation }) => {
@@ -12,13 +13,13 @@ export default class Details extends Component {
             title: "Details",
             headerStyle: { backgroundColor: '#CFDBD5' },
             headerTitleStyle: { fontSize: 25 },
-            headerRight: 
-            <Icon
-            name="diamond-stone"
-            color="blue"
-            size ={45}
-            style = {{paddingRight: 10}}
-            />
+            headerRight:
+                <Icon
+                    name="diamond-stone"
+                    color="blue"
+                    size={45}
+                    style={{ paddingRight: 10 }}
+                />
         }
     }
 
@@ -54,57 +55,60 @@ export default class Details extends Component {
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.getItems()
     }
 
     render() {
-       
+
         const url = global.item.website
         const Phone = global.item.formatted_phone_number
+        const address = global.item.formatted_address
         const pic = pics[global.item.picid]
         console.log(pic)
 
-        return(
-            <ScrollView style={{marginBottom: 60}}>
+        return (
+            <ScrollView style={{ marginBottom: 60 }}>
                 <View style={styles.Image}>
                     <Image
                         source={pic}
-                        style={{height:200, width: '100%'}}
+                        style={{ height: 200, width: '100%' }}
                     />
                 </View>
                 <View style={styles.Header}>
-                    <Text h3 style={{textAlign: 'center', paddingBottom: 10, marginTop: 10}}>{global.item.name}</Text>
-                    <Text style={{textAlign: "center", fontSize: 26}}>{global.item.description}</Text>
+                    <Text h3 style={{ textAlign: 'center', paddingBottom: 10, marginTop: 10 }}>{global.item.name}</Text>
+                    <Text style={{ textAlign: "center", fontSize: 26 }}>{global.item.description}</Text>
                 </View>
                 <View style={styles.Bottom}>
-                    <Text style={{textAlign: 'center', paddingBottom: 5, fontSize: 20}}>{global.item.opening_hours.weekday_text[global.day]}</Text>
+                    <Text style={{ textAlign: 'center', paddingBottom: 5, fontSize: 20 }}>{global.item.opening_hours.weekday_text[global.day]}</Text>
                     {/* make this link to the maps */}
-                    <Text style={{textAlign: 'center', paddingBottom: 5, fontSize: 20}}>{global.item.formatted_address}</Text>
-                    {/* make this link to a phone call */}
-                    <Text style={{textAlign: 'center', paddingBottom: 5, fontSize: 20}} onPress={() => Linking.openURL(`tel:${Phone}`)}>{Phone}</Text>
-                    {/* Style the link maybe a touchable opacity */}
-                    <Text style={styles.Website} onPress={() => Linking.openURL(url)}>Check out the Website</Text>
-                    {/* The Mapping for reviews */}
-                    {
-                        this.state.items.map((l, i) => (
-                            <ListItem
-                                key={i}
-                                title={l.title}
-                                rightTitle={l.gems}
-                                rightSubtitle={l.reviewer}
-                                titleStyle={{
-                                    fontSize: 25,
-                                    paddingBottom: 6,
-                                    color: 'black',
-                                }}
-                                subtitle={l.reviewBody}
-                                bottomDivider
-                            />
-                        ))
-                    }
+                    <Text style={{ textAlign: 'center', paddingBottom: 5, fontSize: 20 }} onPress={() => LaunchNavigator.navigate(address)
+                        .then(() => console.log("Launched navigator"))
+                        .catch((err) => console.error("Error launching navigator: " + err)) }>{global.item.formatted_address}</Text>
+                {/* make this link to a phone call */}
+                <Text style={{ textAlign: 'center', paddingBottom: 5, fontSize: 20 }} onPress={() => Linking.openURL(`tel:${Phone}`)}>{Phone}</Text>
+                {/* Style the link maybe a touchable opacity */}
+                <Text style={styles.Website} onPress={() => Linking.openURL(url)}>Check out the Website</Text>
+                {/* The Mapping for reviews */}
+                {
+                    this.state.items.map((l, i) => (
+                        <ListItem
+                            key={i}
+                            title={l.title}
+                            rightTitle={l.gems}
+                            rightSubtitle={l.reviewer}
+                            titleStyle={{
+                                fontSize: 25,
+                                paddingBottom: 6,
+                                color: 'black',
+                            }}
+                            subtitle={l.reviewBody}
+                            bottomDivider
+                        />
+                    ))
+                }
                 </View>
-            </ScrollView>
+            </ScrollView >
         )
     }
 }
@@ -115,22 +119,22 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    Bottom:{
+    Bottom: {
         marginTop: 25,
     },
-    Website:{
+    Website: {
         textAlign: 'center',
-        paddingBottom: 5, 
-        fontSize: 20, 
+        paddingBottom: 5,
+        fontSize: 20,
         fontStyle: 'italic',
         fontWeight: 'bold',
         color: '#2A3D45'
     },
-    Image:{
-        shadowOffset: {width: .2, height: 2 },
+    Image: {
+        shadowOffset: { width: .2, height: 2 },
         shadowColor: 'black',
         shadowOpacity: 5,
-        shadowRadius: 10, 
+        shadowRadius: 10,
         paddingBottom: 10
     }
 })

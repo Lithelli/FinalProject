@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 
-// import MapView from 'react-native-maps'
+import MapView from 'react-native-maps'
 
 export default class App extends Component {
   static navigationOptions = ({ navigation }) => {
