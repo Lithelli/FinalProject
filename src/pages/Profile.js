@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { View, SafeAreaView, Image, StyleSheet, ImageBackground } from 'react-native'
-import { Button, Text } from 'react-native-elements';
+import { Button, Text, ListItem } from 'react-native-elements';
 import  Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import Sky from '../assets/pics/sky.jpg'
 
@@ -18,6 +18,47 @@ export default class Profile extends Component {
             style = {{paddingRight: 10}}
             />
         }
+    }
+
+    constructor(props) {
+        super(props)
+        this.state = {
+            items: [],
+            isVisible: false
+        };
+    }
+
+    getItems = async () => {
+        try {
+            let response = await fetch(`https://bham-gems-api.herokuapp.com/reviews/reviewer/asdfasdf`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+            let res = await response.json();
+            if (!res) {
+                console.log('Nope');
+            } else {
+                console.log(res);
+                this.setState({
+                    items: res,
+                })
+            }
+        } catch (error) {
+            console.log('Something went wrong');
+        }
+    }
+
+    componentDidMount(){
+        this.getItems()
+    }
+
+    handleClick = () => {
+        return (
+
+        )
     }
 
   render() {
@@ -44,13 +85,27 @@ export default class Profile extends Component {
                     raised = {true}
                     />
                 </View>
-                <View style={styles.Reviews}>
-                    <Text h3 style={{paddingBottom: 20}}>My Reviews</Text>
-                    {/* HardCode or Map. Probably Hard Code */}
-                    <Text>YUM</Text>
-                    <Text>Not YUM</Text>
+                <View>
+                    <Text h3 style={{paddingBottom: 20, alignSelf: 'center'}}>My Reviews</Text>
+                    {/* mapping through reviews */}
+                    {
+                        this.state.items.map((l, i) => (
+                            <ListItem
+                                key={i}
+                                title={l.title}
+                                rightTitle={l.gems}
+                                rightSubtitle={l.businessid}
+                                titleStyle={{
+                                    fontSize: 25,
+                                    paddingBottom: 6,
+                                    color: 'black',
+                                }}
+                                subtitle={l.reviewBody}
+                                bottomDivider
+                            />
+                        ))
+                    }
                 </View>
-                
             </View>
         </SafeAreaView>
     )
@@ -84,11 +139,6 @@ const styles = StyleSheet.create({
     UserContent:{
         flexDirection:"column",
         height: "75%"
-    },
-    Reviews:{
-        flex:1,
-        alignItems:"center",
-        justifyContent: "flex-start"
     },
     FoodTruck:{
         // flex: 1,
